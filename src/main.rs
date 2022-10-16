@@ -1,3 +1,8 @@
+mod server;
+
+use std::net::TcpListener;
+
+
 const HELP: &str = "
 USAGE:
     tinyvalue [FLAGS]
@@ -30,6 +35,14 @@ fn parse_flags(args: &Vec<String>) -> Result<&str, ()> {
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let config_path = parse_flags(&args).unwrap();
+
+    let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
+
+    for stream in listener.incoming() {
+        let stream = stream.unwrap();
+
+        server::handle_connection(stream);
+    }
 }
 
 #[cfg(test)]
