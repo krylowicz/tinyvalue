@@ -5,11 +5,13 @@ use std::{
 
 pub fn handle_connection(mut stream: TcpStream) {
     let buf_reader = BufReader::new(&mut stream);
-    let request: Vec<_> = buf_reader
-        .lines()
-        .map(|result| result.unwrap())
-        .take_while(|line| !line.is_empty())
-        .collect();
+    let request_line = buf_reader.lines().next().unwrap().unwrap();
     
-    println!("request: {request:#?}");
+    let endpoint = match &request_line[..] {
+        "GET /get HTTP/1.1" => "/get",
+        "GET /set HTTP/1.1" => "/set",
+        _ => ""
+    };
+
+    println!("{endpoint}");
 }
