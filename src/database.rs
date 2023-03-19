@@ -1,11 +1,11 @@
 use std::fs::{File, OpenOptions};
 use std::io::Write;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::path::PathBuf;
 
 
 struct Database {
-    map: HashMap<String, String>,
+    store: BTreeMap<String, String>,
     auto_commit: bool,
     file: File,
 }
@@ -13,7 +13,7 @@ struct Database {
 impl Database {
     pub fn new(path: PathBuf, auto_commit: Option<bool>) -> Self {
         Self {
-            map: HashMap::new(),
+            store: BTreeMap::new(),
             auto_commit: auto_commit.unwrap_or(true),
             file: OpenOptions::new()
                               .read(true)
@@ -25,18 +25,18 @@ impl Database {
     }
 
     pub fn put(&mut self, key: &str, value: &str) {
-        self.map.insert(key.to_string(), value.to_string());
+        self.store.insert(key.to_string(), value.to_string());
         self.commit();
     }
 
     pub fn get(&self, key: &str) -> String {
-        self.map.get(key).unwrap().to_string()
+        self.store.get(key).unwrap().to_string()
     }
 
     pub fn commit(&mut self) {
         self.file.set_len(0).unwrap();
 
-        for (key, value) in &self.map {
+        for (key, value) in &self.store {
             self.file.write_all(format!("{} {}\n", key, value).as_bytes()).unwrap();
         }
     }
