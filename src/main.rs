@@ -1,5 +1,6 @@
 mod server;
 mod cli;
+mod database;
 
 use std::net::TcpListener;
 

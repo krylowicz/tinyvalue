@@ -24,7 +24,7 @@ mod tests {
         ($($x:expr),*) => (vec![$($x.to_string()),*]);
     }
 
-    use crate::parse_flags;
+    use super::*;
 
     #[test]
     fn proper_flags() {
